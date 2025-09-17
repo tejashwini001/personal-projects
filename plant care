@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Plant Care Reminder</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 20px; }
+    input, button { margin: 5px; padding: 8px; }
+    .plant { margin-top: 10px; border: 1px solid #ccc; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>🌱 Plant Care Reminder</h2>
+  
+  <input id="plantName" placeholder="Enter plant name">
+  <input id="days" type="number" placeholder="Water every X days">
+  <button onclick="addPlant()">Add Plant</button>
+  
+  <h3>My Plants</h3>
+  <div id="plantList"></div>
+  
+  <script src="script.js"></script>
+</body>
+</html>
+function addPlant() {
+  let name = document.getElementById("plantName").value;
+  let days = document.getElementById("days").value;
+
+  if(name && days) {
+    let plant = { name, days, lastWatered: new Date().toDateString() };
+
+    // Save to localStorage
+    let plants = JSON.parse(localStorage.getItem("plants")) || [];
+    plants.push(plant);
+    localStorage.setItem("plants", JSON.stringify(plants));
+
+    displayPlants();
+  }
+}
+
+function displayPlants() {
+  let plants = JSON.parse(localStorage.getItem("plants")) || [];
+  let list = document.getElementById("plantList");
+  list.innerHTML = "";
+
+  plants.forEach((p, i) => {
+    list.innerHTML += `
+      <div class="plant">
+        🌿 <b>${p.name}</b> – Water every ${p.days} days  
+        <br> Last Watered: ${p.lastWatered} 
+        <br><button onclick="waterPlant(${i})">💧 Water</button>
+      </div>`;
+  });
+}
+
+function waterPlant(index) {
+  let plants = JSON.parse(localStorage.getItem("plants"));
+  plants[index].lastWatered = new Date().toDateString();
+  localStorage.setItem("plants", JSON.stringify(plants));
+  displayPlants();
+}
+
+displayPlants();
